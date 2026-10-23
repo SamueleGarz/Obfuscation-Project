@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,8 +91,15 @@ public class MainWorker {
 
     public void main() {
         //Find the files
-        File sources = new File(System.getProperty("data.dir","data")+"/Sources");
+        try {
+            Files.createDirectories(Path.of("data/Jars"));
+            Files.createDirectories(Path.of("data/Sources"));
+        } catch (Exception e){
+            System.out.println("Issues when checking / creating the data/ directories");
+            e.printStackTrace();
+        }
 
+        File sources = new File(System.getProperty("data.dir","data")+"/Sources");
         File[] files=sources.listFiles();
         if (files == null) {
             return;
