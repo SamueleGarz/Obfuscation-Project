@@ -6,7 +6,7 @@ enum Type{
     OTHER
 }
 
-public class sourceData {
+public class SourceData {
     public Path sourcePath;
     public boolean builds;
     Type buildType;
@@ -25,13 +25,13 @@ public class sourceData {
         }
     }
 
-    sourceData(Path path, Boolean built, Type type){
+    SourceData(Path path, Boolean built, Type type){
         this.sourcePath=path;
         this.builds=built;
         this.buildType=type;
     }
 
-    sourceData(){
+    SourceData(){
         this.sourcePath=null;
         this.builds=false;
         this.buildType=Type.OTHER;
