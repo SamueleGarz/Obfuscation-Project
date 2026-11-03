@@ -47,18 +47,18 @@ public class commandExecute {
                     errStorage.add(lineErr);
                 }
                 int code=proc.waitFor();
-                if (VERBOSE) System.out.println("\tCode: "+code);
+                if (VERBOSE) Helper.printResult("\tCode",String.valueOf(code),code==0);
 
                 //print any and all errors
                 if (VERBOSE && code!=0) {
-                    System.err.println("\tError log for build of "+target.getPath()+":");
+                    Helper.printRed("\tError log for build of "+target.getPath()+":");
                     for (String a : errStorage){
-                        System.err.println("\t\t"+a);
+                        Helper.printRed("\t\t"+a);
                     }
                 }
                 return code;
             }catch (Exception e){
-                System.err.println("Exception arose while running the command "+ Arrays.toString(command) +" in directory "+target+" :\n"+e);
+                Helper.printRed("Exception arose while running the command "+ Arrays.toString(command) +" in directory "+target+" :\n"+e);
             }
         }
         return -1;

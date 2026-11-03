@@ -20,31 +20,16 @@ public class MainWorker {
     /// @return returns a sourceData instance. If the build fails returns an object with builds=False and type=OTHER. If the target is null, not a directory or not readable, the path is also null.
     ///
     /// TODO: Add more compilation tools, add the option to build without the wrappers
-    public SourceData builds(File target){
-        //checks for existence and readability
-        //Should never be null based on default execution, but
-        //to avoid future issues it's better to add it.
-        //It is redundant with the checks in the Build classes, but just to be safe better to check
-        if (target==null){
-            if (VERBOSE) System.err.println("\tError: Null target");
-            return new SourceData();
-        }
-        if (!target.isDirectory()) {
-            if (VERBOSE) System.err.println("\tError: Not a directory: "+target.getName());
-            return new SourceData();
-        }
-        if (!target.canRead()){
-            if (VERBOSE) System.err.println("\tError: Cannot read the given directory: "+target.getName());
-            return new SourceData();
-        }
+    public BuildData builds(File target){
+        if(!Helper.isValidDir(target)) return new BuildData();
 
-        SourceData temp=buildGradle.apply(target);
+        BuildData temp=buildGradle.apply(target);
         if(temp.builds) return temp;
 
         temp=buildMaven.apply(target);
         if(temp.builds) return temp;
 
-        return new SourceData(target.toPath(),false,Type.OTHER);
+        return new BuildData(target.toPath(),false, BuildType.OTHER);
 
     }
 
@@ -59,7 +44,7 @@ public class MainWorker {
 
         //Set arguments if present
         if(args.length<1){
-            System.out.println("Additional arguments omitted.\nCurrent arguments:\n\tVERBOSE="+VERBOSE);
+            Helper.printResult("Additional arguments omitted.\nCurrent arguments:\n\tVERBOSE",VERBOSE);
         }
         else{
             try{
@@ -68,7 +53,7 @@ public class MainWorker {
                 //not necessary if VERBOSE=false, by default it's false
                 this.jarWorker.setVERBOSE(VERBOSE);
             } catch (Exception e) {
-                System.err.println("Argument invalid for VERBOSE\nArgument passed: "+args[0]+"\nExpected: [true/false] (case-insensitive)\nCurrent arguments:\n\tVERBOSE="+VERBOSE);
+                Helper.printRed("Argument invalid for VERBOSE\nArgument passed: "+args[0]+"\nExpected: [true/false] (case-insensitive)\nCurrent arguments:\n\tVERBOSE="+VERBOSE);
             }
         }
 
@@ -77,7 +62,7 @@ public class MainWorker {
             Files.createDirectories(Path.of(System.getProperty("data.dir","data")+"/Jars"));
             Files.createDirectories(Path.of(System.getProperty("data.dir","data")+"/Sources"));
         } catch (Exception e){
-            System.err.println("Exception arose while creating the /Jars and /Sources repositories:\n"+e);
+            Helper.printRed("Exception arose while creating the /Jars and /Sources repositories:\n"+e);
         }
 
         File sources = new File(System.getProperty("data.dir","data")+"/Sources");
@@ -90,21 +75,21 @@ public class MainWorker {
 
         for (File file : files) {
             // Print name of each file in the data/Sources folder
-            if(VERBOSE) System.out.println("- "+file.getName());
+            if(VERBOSE) Helper.print("- "+file.getName());
 
             //Check if each compiles properly with one of the methods
-            SourceData buildRes=builds(file);
+            BuildData buildRes=builds(file);
 
-            if(VERBOSE) System.out.println("\tCan build: "+buildRes.builds);
-//            if(buildRes.builds){
-//                jarWorker.jar_finder(buildRes.sourcePath,buildRes.buildDir());
+            if(VERBOSE) Helper.printResult("\tCan build",buildRes.builds);
+            if(buildRes.builds){
+                jarWorker.jar_finder(buildRes.sourcePath,buildRes.buildType.buildDir);
                 //inject inside the program
 
                 //check if they compile again after injection
                 //in the future possibly inject something else
 
                 //read the new jar and look for the injection
-//            }
+            }
         }
     }
 }

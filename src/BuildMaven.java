@@ -8,8 +8,8 @@ public class BuildMaven implements BuilderInterface{
     public static final List<String> INDICATOR_FILEs =List.of("pom.xml");
 
     @Override
-    public SourceData apply(File target) {
-        if(target==null || !target.isDirectory() || !target.canRead()) return new SourceData();
+    public BuildData apply(File target) {
+        if(!Helper.isValidDir(target)) return new BuildData();
         if(isApplicable(target)){
             if(wrapperExists(target)){
                 return buildWithWrapper(target);
@@ -19,27 +19,27 @@ public class BuildMaven implements BuilderInterface{
                 }
             }
         }
-        return new SourceData(target.toPath(),false,Type.OTHER);
+        return new BuildData(target.toPath(),false, BuildType.OTHER);
     }
 
     @Override
     public boolean isApplicable(File target) {
-        if(target==null || !target.isDirectory() || !target.canRead()) return false;
+        if(!Helper.isValidDir(target)) return false;
         return INDICATOR_FILEs.stream().anyMatch(n -> Files.exists(Paths.get(target + "/" + n)));
     }
 
     @Override
     public boolean wrapperExists(File target) {
-        if(target==null || !target.isDirectory() || !target.canRead()) return false;
+        if(!Helper.isValidDir(target)) return false;
         return Files.exists(Paths.get(target.getPath().concat("/mvn")));
     }
 
     @Override
-    public SourceData buildWithWrapper(File target) {
+    public BuildData buildWithWrapper(File target) {
         if (commandExecute.runComm(target,new String[]{"./mvnw","clean","package"}) == 0) {
-            return new SourceData(target.toPath(),true,Type.MAVEN);
+            return new BuildData(target.toPath(),true, BuildType.MAVEN);
         }else{
-            return new SourceData(target.toPath(),false,Type.MAVEN);
+            return new BuildData(target.toPath(),false, BuildType.MAVEN);
         }
     }
 
@@ -49,7 +49,7 @@ public class BuildMaven implements BuilderInterface{
     }
 
     @Override
-    public SourceData buildWithoutWrapper(File target) {
-        return new SourceData(target.toPath(),false,Type.MAVEN);
+    public BuildData buildWithoutWrapper(File target) {
+        return new BuildData(target.toPath(),false, BuildType.MAVEN);
     }
 }
