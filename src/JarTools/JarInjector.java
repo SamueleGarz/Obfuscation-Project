@@ -1,3 +1,13 @@
+package JarTools;
+
+import BytecodeIteration.InjectionClassTraveller;
+import InjectionMethods.InjectionMethodEverywhere;
+import InjectionMethods.InjectionMethodEverywhereClass;
+import InjectionMethods.InjectionMethodFirstMain;
+import Main.Helper;
+import Main.PluginType;
+import ObfuscationMethods.ObfuscatorInterface;
+import ObfuscationMethods.ObfuscatorSimplePrint;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -19,23 +29,34 @@ import java.util.jar.JarOutputStream;
 
 import static org.objectweb.asm.Opcodes.ASM9;
 
-public class JarWorker {
+///Finds all the Jars inside a specific directory following build, creates the JarData Object and Injects payloads into a new
+/// Jar located under data/Jars
+public class JarInjector {
 
     boolean VERBOSE=false;
 
-    /// Generates the JarData by looking at the entrypoint of the major plugin loaders specified in PluginType
+    //Obfuscators
+    ArrayList<ObfuscatorInterface<Consumer<MethodVisitor>>> obfuscators=new ArrayList<>();
+
+    public JarInjector(){
+        obfuscators.add(new ObfuscatorSimplePrint(new InjectionMethodEverywhere()));
+        obfuscators.add(new ObfuscatorSimplePrint(new InjectionMethodFirstMain()));
+        obfuscators.add(new ObfuscatorSimplePrint(new InjectionMethodFirstMain()));
+    }
+
+    /// Generates the JarTools.JarData by looking at the entrypoint of the major plugin loaders specified in PluginType
     ///
     /// So far, it's only able to read .yml and .json, with in theory .toml too but since the way Forge and NeoForge decide
     /// the entrypoint is different, there is little use at this point
     /// @param entries the JarFile to search the entrypoint of
-    /// @return a JarData object build based on the data found.
+    /// @return a JarTools.JarData object build based on the data found.
     public JarData generateData(JarFile entries){
         JarData outp=new JarData();
         //Plugin is fabric
         JarEntry test=null;
 
         //check for the type based on the entrypoint of each type
-        for(PluginType a:PluginType.values()){
+        for(PluginType a: PluginType.values()){
             test=entries.getJarEntry(a.entryPath);
             if (test!=null){
                 outp.type=a;
@@ -64,29 +85,29 @@ public class JarWorker {
                             }
                         }
                     }
-                }catch (Exception e){Helper.printRed("\tError: Exception arose on the inputStream of "+test.getRealName()+":\n"+e);                }
+                }catch (Exception e){
+                    Helper.printRed("\tError (Injection): Exception arose on the inputStream of "+test.getRealName()+":\n"+e);                }
             }else if(VERBOSE){ Helper.printRed("\tNEOFORGE, FORGE 1.13+ or FORGE 1.12 or older"); }
-        }else if(VERBOSE) Helper.printRed("\tError: No type matches the given jar");
+        }else if(VERBOSE) Helper.printRed("\tError (Injection): No type matches the given jar");
 
         return outp;
     }
 
-    //Obfuscators
-    BytecodeClassObfuscationSimplePrint bytecodeClassObfuscationSimplePrint =new BytecodeClassObfuscationSimplePrint();
-    BytecodeClassObfuscationSimpleMain bytecodeClassObfuscationSimpleMain=new BytecodeClassObfuscationSimpleMain();
+
+
 
     /// Explores a given .jar
     ///
     /// @param toJar Path to the jar file to explore using JarFile
     ///
     /// TODO: add a filter method or class for every entry to decide when to apply what transformation / insertion / ecc.
-    private void jarExplorer(Path toJar){
+    public JarData jarExplorer(Path toJar){
         if(VERBOSE) Helper.printResultCyan("\tFound a jar",toJar.toString());
-        boolean first=true;
+        JarData outp=new JarData();
         try(JarFile jar=new JarFile(toJar.toString())){
 
-            //create the JarData of the file:
-            JarData jarData=generateData(jar);
+            //create the JarTools.JarData of the file:
+            outp=generateData(jar);
 
             try(JarOutputStream out=new JarOutputStream(new BufferedOutputStream(Files.newOutputStream(Path.of("data/Jars/"+toJar.getFileName()))))){
                 Enumeration<JarEntry> entries= jar.entries();
@@ -100,14 +121,15 @@ public class JarWorker {
                         List<Consumer<MethodVisitor>> classPayloads=new ArrayList<>();
 
                         //Check for applicability and if valid add it
-                        if(bytecodeClassObfuscationSimplePrint.isApplicable(entry,jarData)) classPayloads.add(bytecodeClassObfuscationSimplePrint.generatePayload());
-                        if(bytecodeClassObfuscationSimpleMain.isApplicable(entry,jarData)) classPayloads.add(bytecodeClassObfuscationSimpleMain.generatePayload());
+                        for (ObfuscatorInterface<Consumer<MethodVisitor>> obf:obfuscators){
+                            if(obf.isApplicable(entry,outp)) classPayloads.add(obf.generatePayload());
+                        }
 
                         try(InputStream classStream= jar.getInputStream(entry)){
                             byte[] classBytes = classStream.readAllBytes();
                             ClassReader cr=new ClassReader(classBytes);
                             ClassWriter cw=new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
-                            ClassTraveller ct=new ClassTraveller(ASM9,cw,classPayloads);
+                            InjectionClassTraveller ct=new InjectionClassTraveller(ASM9,cw,classPayloads);
 
                             cr.accept(ct,ClassReader.EXPAND_FRAMES);
 
@@ -116,31 +138,27 @@ public class JarWorker {
                             out.write(res);
                             out.closeEntry();
                         }catch (Exception e){
-                            Helper.printRed("Exception arose on the inputStream of "+entry.getRealName()+":\n"+e);
+                            Helper.printRed("\tError (Injection): Exception arose on the inputStream of "+entry.getRealName()+":\n"+e);
                         }
+
+                        //Reset all the methods
+                        for (ObfuscatorInterface<Consumer<MethodVisitor>> obf:obfuscators){
+                            obf.reset();
+                        }
+
                     }else{
                         out.putNextEntry(entry);
                         out.closeEntry();
                     }
                 }
             } catch (Exception e) {
-                Helper.printRed("Exception arose while reading the JarOutputStream of "+jar.getName()+": \n"+e);
+                Helper.printRed("\tError (Injection): Exception arose while reading the JarOutputStream of "+jar.getName()+": \n"+e);
             }
         }catch (Exception e){
-            Helper.printRed("Exception arose while opening the jarFile with Path "+toJar+": \n"+e);
+            Helper.printRed("\tError (Injection): Exception arose while opening the jarFile with Path "+toJar+": \n"+e);
         }
-    }
-
-    /// Locate all the jar files inside a given target
-    /// @param start Path of the directory to start the walk from
-    /// @param buildParent Filter for the walk; only files that include _buildParent_ in their path will be observed
-    ///
-    public void jar_finder(Path start, String buildParent){
-        try{
-            Files.walk(start).filter(path -> path.toString().endsWith(".jar") && path.getParent().toString().contains(buildParent)).forEach(this::jarExplorer);
-        } catch (Exception e){
-            Helper.printRed("Exception arose during the walk of Path "+start+": \n"+e);
-        }
+        outp.filePath=Path.of("data/Jars/"+toJar.getFileName());
+        return outp;
     }
 
     /// Set the variable VERBOSE in the object

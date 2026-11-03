@@ -1,14 +1,16 @@
+package BytecodeIteration;
+
+import Main.Helper;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public class MethodTraveller extends MethodVisitor {
+public class InjectionMethodTraveller extends MethodVisitor {
 
     List<Consumer<MethodVisitor>> payloads=null;
 
-    protected MethodTraveller(int api, MethodVisitor methodVisitor, List<Consumer<MethodVisitor>> payloads) {
+    protected InjectionMethodTraveller(int api, MethodVisitor methodVisitor, List<Consumer<MethodVisitor>> payloads) {
         super(api, methodVisitor);
         this.payloads=payloads;
     }

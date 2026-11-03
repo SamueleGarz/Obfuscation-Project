@@ -1,3 +1,8 @@
+package BuildTools;
+
+import Main.Helper;
+import Main.commandExecute;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;

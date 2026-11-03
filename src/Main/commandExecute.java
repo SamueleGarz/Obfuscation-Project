@@ -1,3 +1,5 @@
+package Main;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -20,7 +22,7 @@ public class commandExecute {
     /// @param target directory in which to execute the command
     /// @param command command to execute using ProcessBuilder
     /// @return result of the command execution, -1 if an issue arose
-    static int runComm(File target, String[] command){
+    public static int runComm(File target, String[] command){
         if(!System.getProperty("os.name").toLowerCase().startsWith("windows")){
             if (target==null){
                 if (VERBOSE) System.err.println("\tError: Null target");

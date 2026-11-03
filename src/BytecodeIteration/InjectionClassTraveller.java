@@ -1,13 +1,15 @@
+package BytecodeIteration;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ClassTraveller extends ClassVisitor {
+public class InjectionClassTraveller extends ClassVisitor {
 
     List<Consumer<MethodVisitor>> payloads=null;
-    protected ClassTraveller(int api, ClassVisitor classVisitor, List<Consumer<MethodVisitor>> payloads) {
+    public InjectionClassTraveller(int api, ClassVisitor classVisitor, List<Consumer<MethodVisitor>> payloads) {
         super(api, classVisitor);
         this.payloads=payloads;
     }
@@ -15,6 +17,6 @@ public class ClassTraveller extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions){
         MethodVisitor base=super.visitMethod(access,name,descriptor,signature,exceptions);
-        return new MethodTraveller(this.api,base,payloads);
+        return new InjectionMethodTraveller(this.api,base,payloads);
     }
 }

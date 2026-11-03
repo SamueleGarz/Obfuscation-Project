@@ -1,6 +1,18 @@
+package Main;
+
+import BuildTools.BuildData;
+import BuildTools.BuildGradle;
+import BuildTools.BuildMaven;
+import BuildTools.BuildType;
+import JarTools.JarData;
+import JarTools.JarDetector;
+import JarTools.JarInjector;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainWorker {
 
@@ -12,7 +24,8 @@ public class MainWorker {
     ///Maven Builder
     BuildMaven buildMaven=new BuildMaven();
 
-    JarWorker jarWorker =new JarWorker();
+    JarInjector jarInjector= new JarInjector();
+    JarDetector jarDetector= new JarDetector();
 
     /// Given a target file, checks if it's not null, a directory and if it can be read. If so, checks if the jar can be built using Gradle (for now, only with the wrapper) or Maven (only wrapper)
     ///
@@ -39,7 +52,7 @@ public class MainWorker {
     /// Following that, it will iterate over all the files under /Sources and attempt to build them; if successful, injection and detection follow
     /// @param args for now, the only argument that can be passed is for VERBOSE. accepted values are [true/false] (case-insensitive), and if not recognized it will default to false.
     ///
-    /// TODO: add detection, improve injection (See JarWorker)
+    /// TODO: add detection, improve injection (See JarTools.JarWorker)
     void main(String[] args) {
 
         //Set arguments if present
@@ -51,7 +64,8 @@ public class MainWorker {
                 this.VERBOSE=Boolean.parseBoolean(args[0]);
                 commandExecute.setVerbose(this.VERBOSE);
                 //not necessary if VERBOSE=false, by default it's false
-                this.jarWorker.setVERBOSE(VERBOSE);
+                this.jarInjector.setVERBOSE(VERBOSE);
+                this.jarDetector.setVERBOSE(VERBOSE);
             } catch (Exception e) {
                 Helper.printRed("Argument invalid for VERBOSE\nArgument passed: "+args[0]+"\nExpected: [true/false] (case-insensitive)\nCurrent arguments:\n\tVERBOSE="+VERBOSE);
             }
@@ -82,8 +96,18 @@ public class MainWorker {
 
             if(VERBOSE) Helper.printResult("\tCan build",buildRes.builds);
             if(buildRes.builds){
-                jarWorker.jar_finder(buildRes.sourcePath,buildRes.buildType.buildDir);
+                List<JarData> data=new ArrayList<>();
+
                 //inject inside the program
+                try{
+                    Files.walk(buildRes.sourcePath).filter(path -> path.toString().endsWith(".jar") && path.getParent().toString().contains(buildRes.buildType.buildDir)).forEach(path -> data.add(jarInjector.jarExplorer(path)));
+                } catch (Exception e){
+                    Helper.printRed("Exception arose during the walk of Path "+buildRes.sourcePath+": \n"+e);
+                }
+
+                for(JarData element:data){
+                    jarDetector.jarExplorer(element);
+                }
 
                 //check if they compile again after injection
                 //in the future possibly inject something else
