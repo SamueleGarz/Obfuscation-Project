@@ -2,11 +2,11 @@ package JarTools;
 
 import BytecodeIteration.InjectionClassTraveller;
 import InjectionMethods.InjectionMethodEverywhere;
-import InjectionMethods.InjectionMethodEverywhereClass;
 import InjectionMethods.InjectionMethodFirstMain;
 import Main.Helper;
-import Main.PluginType;
+import BuildTools.PluginType;
 import ObfuscationMethods.ObfuscatorInterface;
+import ObfuscationMethods.ObfuscatorPrintB64;
 import ObfuscationMethods.ObfuscatorSimplePrint;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -38,10 +38,10 @@ public class JarInjector {
     //Obfuscators
     ArrayList<ObfuscatorInterface<Consumer<MethodVisitor>>> obfuscators=new ArrayList<>();
 
+    ///all the methods to use are placed here
     public JarInjector(){
-        obfuscators.add(new ObfuscatorSimplePrint(new InjectionMethodEverywhere()));
         obfuscators.add(new ObfuscatorSimplePrint(new InjectionMethodFirstMain()));
-        obfuscators.add(new ObfuscatorSimplePrint(new InjectionMethodFirstMain()));
+        obfuscators.add(new ObfuscatorPrintB64(new InjectionMethodFirstMain()));
     }
 
     /// Generates the JarTools.JarData by looking at the entrypoint of the major plugin loaders specified in PluginType

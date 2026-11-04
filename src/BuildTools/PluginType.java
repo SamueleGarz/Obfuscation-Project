@@ -1,4 +1,4 @@
-package Main;
+package BuildTools;
 
 ///Enum with all the currently implemented tool
 public enum PluginType {

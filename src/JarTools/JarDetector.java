@@ -1,25 +1,28 @@
 package JarTools;
 
-import BytecodeIteration.InjectionClassTraveller;
-import DetectionTools.DetectionData;
+import BytecodeIteration.DetectionClassTravellerSimple;
+import BytecodeIteration.DetectionMethodTravellerB64;
+import DetectionMethods.DetectionMethodBytecodeAbstract;
+import DetectionMethods.DetectionMethodInterface;
+import DetectionMethods.DetectionMethodSimple;
 import Main.Helper;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import static org.objectweb.asm.Opcodes.ASM9;
 
 public class JarDetector {
 
     boolean VERBOSE=false;
+
+    List<DetectionMethodInterface> detectionMethods=new ArrayList<>();
+
+    public JarDetector(){
+
+        detectionMethods.add(
+                new DetectionMethodSimple(DetectionClassTravellerSimple::new, DetectionMethodTravellerB64::new
+                ));
+    }
 
     /// Set the variable VERBOSE in the object
     /// @param verbose true or false boolean value
@@ -27,18 +30,14 @@ public class JarDetector {
         this.VERBOSE=verbose;
     }
 
-    public DetectionData jarExplorer(JarData data){
-        DetectionData outp= new DetectionData();
+    ///
+    public void jarExplorer(JarData data){
         try(JarFile jar=new JarFile(data.filePath.toString())){
-            Enumeration<JarEntry> entries= jar.entries();
-            while(entries.hasMoreElements()){
-                JarEntry entry=entries.nextElement();
-
+            for(DetectionMethodInterface detectionMethodInterface:detectionMethods){
+                detectionMethodInterface.detect(jar,data);
             }
         }catch (Exception e){
-            Helper.printRed("Error (Detection): Exception arose while opening the jarFile with Path "+data.filePath.toString()+": \n"+e);
+            Helper.printRed("\tError (Detection): Exception arose while opening the jarFile with Path "+data.filePath.toString()+": \n"+e);
         }
-
-        return outp;
     }
 }

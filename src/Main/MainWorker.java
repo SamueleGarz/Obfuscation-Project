@@ -107,7 +107,9 @@ public class MainWorker {
 
                 for(JarData element:data){
                     jarDetector.jarExplorer(element);
+                    if(VERBOSE) element.printNonEmpty("\t");
                 }
+
 
                 //check if they compile again after injection
                 //in the future possibly inject something else
