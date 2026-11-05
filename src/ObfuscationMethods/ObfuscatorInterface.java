@@ -31,6 +31,9 @@ public interface ObfuscatorInterface<payloadType> {
     /// @return A boolean value, true if the method is applicable
     boolean isApplicable(JarEntry target, JarData targetData);
 
+    ///Used to reset/set up a method before a new file is looked at.
+    void initiate();
+
 
 
 }

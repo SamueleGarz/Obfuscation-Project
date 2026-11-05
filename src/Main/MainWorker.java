@@ -107,7 +107,8 @@ public class MainWorker {
 
                 for(JarData element:data){
                     jarDetector.jarExplorer(element);
-                    if(VERBOSE) element.printNonEmpty("\t");
+                    if(VERBOSE) Helper.print("\t"+element.filePath.toString());
+                    if(VERBOSE) element.printNonEmpty("\t\t");
                 }
 
 

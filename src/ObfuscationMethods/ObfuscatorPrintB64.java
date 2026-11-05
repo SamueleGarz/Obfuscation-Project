@@ -55,11 +55,15 @@ public class ObfuscatorPrintB64 implements ObfuscatorInterface<Consumer<MethodVi
 
     @Override
     public boolean isApplicable(JarEntry target, JarData targetData) {
-        return injectionMethod.isConditionTrue(target,targetData);
+        return this.injectionMethod.isConditionTrue(target,targetData);
     }
 
     @Override
     public void reset() {
         this.injectionMethod.reset();
+    }
+
+    @Override
+    public void initiate(){this.injectionMethod.initiate();
     }
 }

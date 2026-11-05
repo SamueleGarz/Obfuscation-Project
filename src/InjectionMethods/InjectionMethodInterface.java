@@ -15,4 +15,7 @@ public interface InjectionMethodInterface {
 
     ///Used to reset any parameter that might have been used previously, such as counters
     void reset();
+
+    ///Used to reset/set up a method before a new file is looked at.
+    void initiate();
 }

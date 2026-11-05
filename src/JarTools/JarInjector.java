@@ -110,6 +110,9 @@ public class JarInjector {
             outp=generateData(jar);
 
             try(JarOutputStream out=new JarOutputStream(new BufferedOutputStream(Files.newOutputStream(Path.of("data/Jars/"+toJar.getFileName()))))){
+                for (ObfuscatorInterface<Consumer<MethodVisitor>> obf:obfuscators){
+                    obf.initiate();
+                }
                 Enumeration<JarEntry> entries= jar.entries();
                 while(entries.hasMoreElements()){
                     JarEntry entry=entries.nextElement();

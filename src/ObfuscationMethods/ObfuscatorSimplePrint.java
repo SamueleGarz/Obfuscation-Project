@@ -40,4 +40,10 @@ public class ObfuscatorSimplePrint implements ObfuscatorInterface<Consumer<Metho
     public void reset() {
         this.injectionMethod.reset();
     }
+
+    @Override
+    public void initiate(){
+        this.injectionMethod.initiate();
+    }
+
 }

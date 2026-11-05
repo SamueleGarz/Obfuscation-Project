@@ -18,7 +18,6 @@ public class JarDetector {
     List<DetectionMethodInterface> detectionMethods=new ArrayList<>();
 
     public JarDetector(){
-
         detectionMethods.add(
                 new DetectionMethodSimple(DetectionClassTravellerSimple::new, DetectionMethodTravellerB64::new
                 ));

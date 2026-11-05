@@ -54,7 +54,8 @@ public class JarData {
         for(JarEntryDetectionData a: entryList){
             if(!a.payloadFound.isEmpty()){
                 Helper.printResultCyan(prefix+"Entry",a.entryName);
-                Helper.print(a.payloadsToJson().replaceAll("\\{+",prefix+"\t").replaceAll("\\}+,?","\n"));;
+//                Helper.print(Helper.replaceAndHighlight(Helper.replaceAndHighlight(Helper.replaceAndHighlight(a.payloadsToJson().replaceAll("\\{+",prefix+"\t").replaceAll("\\}+,?","\n").stripTrailing(),"\"value\"", Helper.TextColors.YELLOW),"\"location\"", Helper.TextColors.PURPLE),"\"type\"", Helper.TextColors.BLUE));;
+                Helper.print(Helper.replaceAndHighlight(a.payloadsToJson().replaceAll("\\{+",prefix+"\t").replaceAll("\\}+,?","\n").stripTrailing(), new String[]{"\"location\"", "\"value\"","\"decodesTo\"","\"type\""},new Helper.TextColors[]{Helper.TextColors.PURPLE, Helper.TextColors.YELLOW, Helper.TextColors.GREEN, Helper.TextColors.BLUE}));
             }
         }
     }

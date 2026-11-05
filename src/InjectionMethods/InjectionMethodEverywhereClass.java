@@ -13,4 +13,8 @@ public class InjectionMethodEverywhereClass implements InjectionMethodInterface 
 
     @Override
     public void reset(){}
+
+    @Override
+    public void initiate(){};
+
 }
