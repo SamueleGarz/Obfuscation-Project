@@ -4,8 +4,32 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/data" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Cuisine-Delight-1.21/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Cuisine-Delight-1.21/src/generated/resources/.cache" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/NaturesCompass-main/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/NaturesCompass-main/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/.kotlin" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/buildSrc/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/buildSrc/.kotlin" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/buildSrc/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/core/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer-client/common/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer-client/fabric/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer-client/neoforge/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer-enchant/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer/common/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer/fabric/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer/neoforge/build" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer/paper/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Sources/Veinminer-main/veinminer/paper/build" />
+      <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="lib" level="project" />
   </component>
 </module>
