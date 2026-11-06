@@ -29,5 +29,5 @@ public class InjectionMethodFirstMain implements InjectionMethodInterface {
     @Override
     public void initiate(){
         this.helperCounter=0;
-    };
+    }
 }

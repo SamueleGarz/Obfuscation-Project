@@ -1,13 +1,10 @@
 package BytecodeIteration;
 
-import DetectionMethods.DetectionMethodBytecodeAbstract;
 import JarTools.JarEntryDetectionData;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 ///Method traveler class that checks for base64 encrypted strings
 public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstract {

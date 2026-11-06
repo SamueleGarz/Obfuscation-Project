@@ -1,9 +1,6 @@
 package Main;
 
-import BuildTools.BuildData;
-import BuildTools.BuildGradle;
-import BuildTools.BuildMaven;
-import BuildTools.BuildType;
+import BuildTools.*;
 import JarTools.JarData;
 import JarTools.JarDetector;
 import JarTools.JarInjector;
@@ -18,14 +15,17 @@ public class MainWorker {
 
     private boolean VERBOSE=false;
 
-    ///Gradle builder
-    BuildGradle buildGradle=new BuildGradle();
-
-    ///Maven Builder
-    BuildMaven buildMaven=new BuildMaven();
+    ///Array list of all the building tools to be used
+    List<BuilderInterface> builders=new ArrayList<>();
 
     JarInjector jarInjector= new JarInjector();
     JarDetector jarDetector= new JarDetector();
+
+    ///Loads all the builders to be used for building
+    public void loadBuilder(){
+        builders.add(new BuildGradle());
+        builders.add(new BuildMaven());
+    }
 
     /// Given a target file, checks if it's not null, a directory and if it can be read. If so, checks if the jar can be built using Gradle (for now, only with the wrapper) or Maven (only wrapper)
     ///
@@ -36,11 +36,11 @@ public class MainWorker {
     public BuildData builds(File target){
         if(!Helper.isValidDir(target)) return new BuildData();
 
-        BuildData temp=buildGradle.apply(target);
-        if(temp.builds) return temp;
-
-        temp=buildMaven.apply(target);
-        if(temp.builds) return temp;
+        BuildData temp;
+        for(BuilderInterface builder:builders){
+            temp=builder.apply(target);
+            if(temp.builds) return temp;
+        }
 
         return new BuildData(target.toPath(),false, BuildType.OTHER);
 
@@ -86,6 +86,9 @@ public class MainWorker {
         if (files == null) {
             return;
         }
+
+        //loads all the builder tools into the array list
+        loadBuilder();
 
         for (File file : files) {
             // Print name of each file in the data/Sources folder

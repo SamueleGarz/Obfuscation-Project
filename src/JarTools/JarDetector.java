@@ -2,7 +2,6 @@ package JarTools;
 
 import BytecodeIteration.DetectionClassTravellerSimple;
 import BytecodeIteration.DetectionMethodTravellerB64;
-import DetectionMethods.DetectionMethodBytecodeAbstract;
 import DetectionMethods.DetectionMethodInterface;
 import DetectionMethods.DetectionMethodSimple;
 import Main.Helper;

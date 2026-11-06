@@ -1,7 +1,6 @@
 package JarTools;
 
 import BytecodeIteration.InjectionClassTraveller;
-import InjectionMethods.InjectionMethodEverywhere;
 import InjectionMethods.InjectionMethodFirstMain;
 import Main.Helper;
 import BuildTools.PluginType;

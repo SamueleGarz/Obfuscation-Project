@@ -38,7 +38,7 @@ public class JarData {
     public void printAllEntries(String prefix){
         for(JarEntryDetectionData a: entryList){
             Helper.printResultCyan(prefix+"Entry",a.entryName);
-            Helper.print(a.payloadsToJson().replaceAll("\\{+",prefix+"\t").replaceAll("\\}+,?","\n"));;
+            Helper.print(a.payloadsToJson().replaceAll("\\{+",prefix+"\t").replaceAll("\\}+,?","\n"));
         }
     }
 

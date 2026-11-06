@@ -1,6 +1,5 @@
 package DetectionMethods;
 
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public interface DetectionMethodInterface {

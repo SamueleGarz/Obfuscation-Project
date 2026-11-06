@@ -80,7 +80,7 @@ public class Helper {
     /// @param base base string to apply the replacements to
     /// @param stringToHighlight array of strings to replace
     /// @param color array of colors to used for each respective string in stringToHighlight. If this array has fewer elements, the last one will be repeated for all remaining substitutions
-    /// @return
+    /// @return Returns a string where the elements inside of stringToHighlight are placed between the color code desired and the color reset code to avoid leaks
     public static String replaceAndHighlight(String base, String[] stringToHighlight, TextColors[] color){
         String ret=base;
         for(int i=0, j=0;i< stringToHighlight.length;i++){

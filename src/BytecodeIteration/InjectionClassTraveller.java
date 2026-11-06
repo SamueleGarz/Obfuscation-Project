@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 public class InjectionClassTraveller extends ClassVisitor {
 
-    List<Consumer<MethodVisitor>> payloads=null;
+    List<Consumer<MethodVisitor>> payloads;
     public InjectionClassTraveller(int api, ClassVisitor classVisitor, List<Consumer<MethodVisitor>> payloads) {
         super(api, classVisitor);
         this.payloads=payloads;
