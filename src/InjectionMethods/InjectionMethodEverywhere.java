@@ -1,13 +1,13 @@
 package InjectionMethods;
 
-import JarTools.JarData;
+import JarTools.InjectionData;
 
 import java.util.jar.JarEntry;
 
 public class InjectionMethodEverywhere implements InjectionMethodInterface {
 
     @Override
-    public boolean isConditionTrue(JarEntry entry, JarData data) {
+    public boolean isConditionTrue(JarEntry entry, InjectionData data) {
         return true;
     }
 

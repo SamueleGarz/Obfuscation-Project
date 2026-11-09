@@ -1,21 +1,19 @@
-package ObfuscationMethods;
+package PayloadGenerators;
 
-import InjectionMethods.InjectionMethodInterface;
-import JarTools.JarData;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.function.Consumer;
-import java.util.jar.JarEntry;
 
-///Inject a payload consisting of System.out.println(new String(Base64.getDecoder().decode(\<something\>)));
-public class ObfuscatorPrintB64 implements ObfuscatorInterface<Consumer<MethodVisitor>>{
+public class PayloadGeneratorPrintB64 implements PayloadGeneratorInterface<Consumer<MethodVisitor>>{
+    /// Produce a payload that consists of the instructions required to add in the bytecode stack the operation to produce System.out.println(Base64.decode(base))
+    /// @param base The base string to be used for the payload. It's actual use can depend based on implementation
+    /// @return the list of methods to be consumed by a methodTraveller to add the instructions to the stack
     @Override
-    public Consumer<MethodVisitor> generatePayload() {
-        //TODO: add payload to the constructor and change link to payload
-        String encoded = Base64.getEncoder().encodeToString("https://dsv.su.se".getBytes(StandardCharsets.UTF_8));
+    public Consumer<MethodVisitor> producePayload(String base) {
+        String encoded = Base64.getEncoder().encodeToString(base.getBytes(StandardCharsets.UTF_8));
         return mv->{
             //push to the stack the System.out (printstream is the ned point where println goes to) so I can build on top of it to get the final result
             mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
@@ -39,31 +37,5 @@ public class ObfuscatorPrintB64 implements ObfuscatorInterface<Consumer<MethodVi
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println",
                     "(Ljava/lang/String;)V", false);
         };
-    }
-
-    InjectionMethodInterface injectionMethod;
-
-    //TODO: add payload to the constructor
-    public ObfuscatorPrintB64(InjectionMethodInterface method){
-        this.injectionMethod=method;
-    }
-
-    @Override
-    public InjectionMethodInterface method() {
-        return this.injectionMethod;
-    }
-
-    @Override
-    public boolean isApplicable(JarEntry target, JarData targetData) {
-        return this.injectionMethod.isConditionTrue(target,targetData);
-    }
-
-    @Override
-    public void reset() {
-        this.injectionMethod.reset();
-    }
-
-    @Override
-    public void initiate(){this.injectionMethod.initiate();
     }
 }

@@ -1,7 +1,8 @@
 package Main;
 
 import BuildTools.*;
-import JarTools.JarData;
+import JarTools.DetectionData;
+import JarTools.InjectionData;
 import JarTools.JarDetector;
 import JarTools.JarInjector;
 
@@ -18,7 +19,7 @@ public class MainWorker {
     ///Array list of all the building tools to be used
     List<BuilderInterface> builders=new ArrayList<>();
 
-    JarInjector jarInjector= new JarInjector();
+    JarInjector jarInjector = new JarInjector();
     JarDetector jarDetector= new JarDetector();
 
     ///Loads all the builders to be used for building
@@ -82,15 +83,20 @@ public class MainWorker {
         File sources = new File(System.getProperty("data.dir","data")+"/Sources");
 
         //Find the projects inside the data/Sources folder
-        File[] files=sources.listFiles();
-        if (files == null) {
+        File[] sourceFiles=sources.listFiles();
+        if (sourceFiles == null) {
             return;
         }
 
         //loads all the builder tools into the array list
         loadBuilder();
 
-        for (File file : files) {
+
+        //the injection module is dependent on being abel to build a certain file, so that's why the check for building
+        //is first
+        //-------------------------------------------------------------------------------------------------------------
+        List<InjectionData> injectionData = new ArrayList<>();
+        for (File file : sourceFiles) {
             // Print name of each file in the data/Sources folder
             if(VERBOSE) Helper.print("- "+file.getName());
 
@@ -98,28 +104,41 @@ public class MainWorker {
             BuildData buildRes=builds(file);
 
             if(VERBOSE) Helper.printResult("\tCan build",buildRes.builds);
-            if(buildRes.builds){
-                List<JarData> data=new ArrayList<>();
-
+            if(buildRes.builds) {
                 //inject inside the program
-                try{
-                    Files.walk(buildRes.sourcePath).filter(path -> path.toString().endsWith(".jar") && path.getParent().toString().contains(buildRes.buildType.buildDir)).forEach(path -> data.add(jarInjector.jarExplorer(path)));
-                } catch (Exception e){
-                    Helper.printRed("Exception arose during the walk of Path "+buildRes.sourcePath+": \n"+e);
+                try {
+                    Files.walk(buildRes.sourcePath).filter(path -> path.toString().endsWith(".jar") &&
+                            path.getParent().toString().contains(buildRes.buildType.buildDir)).forEach(path -> injectionData.add(jarInjector.jarExplorer(path)));
+                } catch (Exception e) {
+                    Helper.printRed("Exception arose during the walk of Path " + buildRes.sourcePath + ": \n" + e);
                 }
 
-                for(JarData element:data){
-                    jarDetector.jarExplorer(element);
-                    if(VERBOSE) Helper.print("\t"+element.filePath.toString());
-                    if(VERBOSE) element.printNonEmpty("\t\t");
-                }
-
-
-                //check if they compile again after injection
-                //in the future possibly inject something else
-
-                //read the new jar and look for the injection
             }
         }
+        Helper.print("Injection Data: ");
+        for(InjectionData d:injectionData){
+            Helper.print("\t"+d.getJson());
+        }
+
+        //Detection module
+        //-------------------------------------------------------------------------------------------------------------
+        File jars = new File(System.getProperty("data.dir","data")+"/Jars");
+        File[] jarFiles=jars.listFiles();
+        if (jarFiles == null) {
+            return;
+        }
+
+        List<DetectionData> detectionData=new ArrayList<>();
+        for(File file: jarFiles){
+            DetectionData temp=new DetectionData(file.toPath());
+            jarDetector.jarExplorer(temp);
+            detectionData.add(temp);
+        }
+
+        Helper.print("Detection Data:");
+        for(DetectionData d:detectionData){
+            d.printNonEmpty("\t");
+        }
+
     }
 }

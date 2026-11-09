@@ -1,6 +1,6 @@
-package DetectionMethods;
+package DetectionManager;
 
-import BytecodeIteration.DetectionClassTravellerAbstract;
+import BytecodeIteration.Detection.DetectionClassTravellerAbstract;
 import JarTools.JarEntryDetectionData;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -8,7 +8,7 @@ import org.objectweb.asm.ClassWriter;
 
 import static org.objectweb.asm.Opcodes.ASM9;
 
-public abstract class DetectionMethodBytecodeAbstract implements DetectionMethodInterface {
+public abstract class DetectionManagerBytecodeAbstract implements DetectionManagerInterface {
 
     ///Used to make it so on creation of an instance of the class the constructor of a generic DetectionClassTravellerAbstract can be passed
     /// using DetectionClassTravellerAbstract::new
@@ -21,7 +21,7 @@ public abstract class DetectionMethodBytecodeAbstract implements DetectionMethod
     private final InitiateClassTraveller initiateClassTraveller;
     private final DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller;
 
-    DetectionMethodBytecodeAbstract(InitiateClassTraveller ict, DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller){
+    DetectionManagerBytecodeAbstract(InitiateClassTraveller ict, DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller){
         this.initiateClassTraveller=ict;
         this.methodTraveller=methodTraveller;
     }

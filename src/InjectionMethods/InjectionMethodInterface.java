@@ -1,6 +1,6 @@
 package InjectionMethods;
 
-import JarTools.JarData;
+import JarTools.InjectionData;
 
 import java.util.jar.JarEntry;
 
@@ -9,9 +9,9 @@ public interface InjectionMethodInterface {
 
     ///Based on the data in the parameters, determine if the conditions are met for injection
     /// @param entry the JarEntry that is currently being visited
-    /// @param data the JarTools.JarData of the Jar being currently visited
+    /// @param data the JarTools.InjectionData of the Jar being currently visited
     /// @return True if applicable
-    boolean isConditionTrue(JarEntry entry, JarData data);
+    boolean isConditionTrue(JarEntry entry, InjectionData data);
 
     ///Used to reset any parameter that might have been used previously, such as counters
     void reset();

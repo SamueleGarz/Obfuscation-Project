@@ -14,7 +14,7 @@
 | &emsp; | -- InjectionClassTraveller &emsp; #The generic class traveller used during bytecode injection of payloads in Jars\
 | &emsp; | -- InjectionMethodTraveller &emsp; #The generic method traveller used during bytecode injection of payloads in Jars\
 | \
-| -- DetectionMethods/ &emsp; #Methods to be used to detect features inside a jar file, implemented according to the interface \
+| -- DetectionManager/ &emsp; #Methods to be used to detect features inside a jar file, implemented according to the interface \
 | &emsp; | -- DetectionMethodBytecodeAbstract &emsp; #The abstract class for the implementation of detection inside of a jar \
 | &emsp; | -- DetectionMethodInterface &emsp; #The base interface for all detection methods \
 | &emsp; | -- DetectionMethodSimple &emsp; #A simple implementation of a detection method that relies on bytecode analysis \
@@ -36,6 +36,6 @@
 | &emsp; | -- Helper &emsp; #Class containing several functions made for quality of life, avoiding redundancy and overall providing help \
 | &emsp; | -- MainWorker &emsp; #Main entrypoint \
 | \
-| -- ObfuscationMethods/ &emsp; #Methods to be used to inject a payload inside a file, for now only jar, build according to the interface\
+| -- ObfuscationMethodsOld/ &emsp; #Methods to be used to inject a payload inside a file, for now only jar, build according to the interface\
 | &emsp; | -- ObfuscatorInterface &emsp; #Interface for all implementations of Obfuscation methods \
 | &emsp; | -- ObfuscatorSimplePrint &emsp; #Simple implementation of an obfuscation methods that injects a System.out.printl(<payload>) inside a jar based on an injection method

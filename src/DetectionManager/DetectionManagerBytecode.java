@@ -1,7 +1,8 @@
-package DetectionMethods;
+package DetectionManager;
 
-import BytecodeIteration.DetectionClassTravellerAbstract;
-import JarTools.JarData;
+import BytecodeIteration.Detection.DetectionClassTravellerAbstract;
+import JarTools.DetectionData;
+import JarTools.InjectionData;
 import Main.Helper;
 
 import java.io.InputStream;
@@ -9,14 +10,14 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class DetectionMethodSimple extends DetectionMethodBytecodeAbstract {
+public class DetectionManagerBytecode extends DetectionManagerBytecodeAbstract {
 
-    public DetectionMethodSimple(InitiateClassTraveller ict, DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller) {
+    public DetectionManagerBytecode(InitiateClassTraveller ict, DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller) {
         super(ict, methodTraveller);
     }
 
     @Override
-    public void detect(JarFile jar, JarData data) {
+    public void detect(JarFile jar, DetectionData data) {
         Enumeration<JarEntry> entries= jar.entries();
         while(entries.hasMoreElements()){
             JarEntry entry=entries.nextElement();

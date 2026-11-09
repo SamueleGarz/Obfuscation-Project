@@ -1,4 +1,4 @@
-package BytecodeIteration;
+package BytecodeIteration.Detection;
 
 import JarTools.JarEntryDetectionData;
 import org.objectweb.asm.ClassVisitor;

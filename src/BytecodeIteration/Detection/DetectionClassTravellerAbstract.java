@@ -1,4 +1,4 @@
-package BytecodeIteration;
+package BytecodeIteration.Detection;
 
 import JarTools.JarEntryDetectionData;
 import org.objectweb.asm.ClassVisitor;
@@ -13,12 +13,12 @@ public class DetectionClassTravellerAbstract extends ClassVisitor {
     /// using DetectionMethodTravellerAbstract::new
     @FunctionalInterface
     public interface InitiateMethodTraveller{
-        DetectionMethodTravellerAbstract create(int api, MethodVisitor methodVisitor, JarEntryDetectionData dd, String methodName);
+        DetectionMethodTravellerAbstract create(int api, MethodVisitor methodVisitor, JarEntryDetectionData jarEntryDetectionData, String methodName);
     }
 
-    protected DetectionClassTravellerAbstract(int api, ClassVisitor classVisitor, JarEntryDetectionData dd, InitiateMethodTraveller methodTraveller) {
+    protected DetectionClassTravellerAbstract(int api, ClassVisitor classVisitor, JarEntryDetectionData jarEntryDetectionData, InitiateMethodTraveller methodTraveller) {
         super(api, classVisitor);
-        this.detectionData=dd;
+        this.detectionData=jarEntryDetectionData;
         this.methodTraveller=methodTraveller;
     }
 }
