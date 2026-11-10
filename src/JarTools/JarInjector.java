@@ -86,7 +86,7 @@ public class JarInjector {
                     Helper.printRed("\tError (Injection): Exception arose on the inputStream of "+test.getRealName()+":\n"+e);                }
             }else if(VERBOSE){ Helper.printRed("\tNEOFORGE, FORGE 1.13+ or FORGE 1.12 or older"); }
         }else if(VERBOSE) Helper.printRed("\tError (Injection): No type matches the given jar");
-
+        
         return outp;
     }
 

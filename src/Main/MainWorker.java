@@ -117,7 +117,7 @@ public class MainWorker {
         }
         Helper.print("Injection Data: ");
         for(InjectionData d:injectionData){
-            Helper.print("\t"+d.getJson());
+            d.printNonEmpty("\t");
         }
 
         //Detection module

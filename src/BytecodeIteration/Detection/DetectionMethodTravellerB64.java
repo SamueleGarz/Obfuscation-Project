@@ -1,6 +1,6 @@
 package BytecodeIteration.Detection;
 
-import JarTools.JarEntryDetectionData;
+import JarTools.JarEntryData;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 
@@ -21,7 +21,7 @@ public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstrac
             return false;
         }
     }
-    public DetectionMethodTravellerB64(int api, MethodVisitor methodVisitor, JarEntryDetectionData dd, String methodName) {
+    public DetectionMethodTravellerB64(int api, MethodVisitor methodVisitor, JarEntryData dd, String methodName) {
         super(api, methodVisitor, dd, methodName);
     }
 

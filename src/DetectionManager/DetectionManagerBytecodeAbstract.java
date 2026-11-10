@@ -1,7 +1,7 @@
 package DetectionManager;
 
 import BytecodeIteration.Detection.DetectionClassTravellerAbstract;
-import JarTools.JarEntryDetectionData;
+import JarTools.JarEntryData;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -14,7 +14,7 @@ public abstract class DetectionManagerBytecodeAbstract implements DetectionManag
     /// using DetectionClassTravellerAbstract::new
     @FunctionalInterface
     public interface InitiateClassTraveller{
-        DetectionClassTravellerAbstract create(int api, ClassVisitor classVisitor, JarEntryDetectionData dd, DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller);
+        DetectionClassTravellerAbstract create(int api, ClassVisitor classVisitor, JarEntryData dd, DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller);
     }
 
     ///used to initialize the class traveller to be used
@@ -27,9 +27,9 @@ public abstract class DetectionManagerBytecodeAbstract implements DetectionManag
     }
 
     ///Explore the given classBytes using and ASM Class Reader and a DetectionClassTravellerAbstract
-    public JarEntryDetectionData explore(byte[] classBytes, String entryName){
+    public JarEntryData explore(byte[] classBytes, String entryName){
 
-        JarEntryDetectionData result=new JarEntryDetectionData(entryName);
+        JarEntryData result=new JarEntryData(entryName);
         ClassReader cr=new ClassReader(classBytes);
         ClassWriter cw=new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
         DetectionClassTravellerAbstract detectionClassTraveller=this.initiateClassTraveller.create(ASM9,cw,result,methodTraveller);

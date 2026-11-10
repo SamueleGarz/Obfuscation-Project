@@ -3,7 +3,9 @@ package ObfuscationManager;
 import BytecodeIteration.Injection.InjectionClassTravellerAbstract;
 import InjectionMethods.InjectionMethodInterface;
 import JarTools.InjectionData;
+import JarTools.JarEntryData;
 import Main.Helper;
+import PayloadGenerators.PayloadData;
 import PayloadGenerators.PayloadGeneratorInterface;
 import org.objectweb.asm.MethodVisitor;
 
@@ -52,7 +54,7 @@ public class ObfuscationManagerBytecode extends ObfuscatorManagerBytecodeAbstrac
                 //ASM loop where the produced payloads are consumed
                 if(entry.getRealName().endsWith(".class")){
                     //List of payloads to inject in the entry
-                    List<Consumer<MethodVisitor>> classPayloads=new ArrayList<>();
+                    List<PayloadData<Consumer<MethodVisitor>>> classPayloads=new ArrayList<>();
 
                     //Check for applicability and if valid add it
                     for(int i=0, j=0, l=0; i<payloadGenerators.size();i++){
@@ -64,10 +66,12 @@ public class ObfuscationManagerBytecode extends ObfuscatorManagerBytecodeAbstrac
                     }
 
                     try(InputStream classStream= jar.getInputStream(entry)){
-                        byte[] res=explore(classStream.readAllBytes(), classPayloads);
+                        JarEntryData entryData=new JarEntryData(entry.getRealName());
+                        byte[] res=explore(classStream.readAllBytes(), classPayloads, entryData);
                         out.putNextEntry(new JarEntry(entry.getName()));
                         out.write(res);
                         out.closeEntry();
+                        data.addEntry(entryData);
                     }catch (Exception e){
                         Helper.printRed("\tError (Injection): Exception arose on the inputStream of "+entry.getRealName()+":\n"+e);
                     }

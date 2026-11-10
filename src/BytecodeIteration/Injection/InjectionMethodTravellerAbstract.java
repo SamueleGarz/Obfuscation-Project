@@ -1,5 +1,7 @@
 package BytecodeIteration.Injection;
 
+import JarTools.JarEntryData;
+import PayloadGenerators.PayloadData;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
@@ -10,12 +12,14 @@ public class InjectionMethodTravellerAbstract extends MethodVisitor{
     public final String methodName;
 
     ///Payloads to inject somewhere in the bytecode
-    public final List<Consumer<MethodVisitor>> payloads;
+    public final List<PayloadData<Consumer<MethodVisitor>>> payloads;
 
+    JarEntryData injectionData;
 
-    protected InjectionMethodTravellerAbstract(int api, MethodVisitor methodVisitor, String methodName, List<Consumer<MethodVisitor>> payloads) {
+    protected InjectionMethodTravellerAbstract(int api, MethodVisitor methodVisitor, String methodName, List<PayloadData<Consumer<MethodVisitor>>> payloads, JarEntryData data) {
         super(api, methodVisitor);
         this.methodName=methodName;
         this.payloads=payloads;
+        this.injectionData=data;
     }
 }
