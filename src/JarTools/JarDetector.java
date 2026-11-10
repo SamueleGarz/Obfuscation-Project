@@ -1,10 +1,9 @@
 package JarTools;
 
-import BytecodeIteration.DetectionClassTravellerSimple;
-import BytecodeIteration.DetectionMethodTravellerB64;
-import DetectionMethods.DetectionMethodBytecodeAbstract;
-import DetectionMethods.DetectionMethodInterface;
-import DetectionMethods.DetectionMethodSimple;
+import BytecodeIteration.Detection.DetectionClassTravellerSimple;
+import BytecodeIteration.Detection.DetectionMethodTravellerB64;
+import DetectionManager.DetectionManagerInterface;
+import DetectionManager.DetectionManagerBytecode;
 import Main.Helper;
 
 import java.util.ArrayList;
@@ -15,11 +14,13 @@ public class JarDetector {
 
     boolean VERBOSE=false;
 
-    List<DetectionMethodInterface> detectionMethods=new ArrayList<>();
+    List<DetectionManagerInterface> detectionMethods=new ArrayList<>();
 
     public JarDetector(){
         detectionMethods.add(
-                new DetectionMethodSimple(DetectionClassTravellerSimple::new, DetectionMethodTravellerB64::new
+                new DetectionManagerBytecode(
+                        DetectionClassTravellerSimple::new,
+                        DetectionMethodTravellerB64::new
                 ));
     }
 
@@ -30,10 +31,10 @@ public class JarDetector {
     }
 
     ///
-    public void jarExplorer(JarData data){
+    public void jarExplorer(DetectionData data){
         try(JarFile jar=new JarFile(data.filePath.toString())){
-            for(DetectionMethodInterface detectionMethodInterface:detectionMethods){
-                detectionMethodInterface.detect(jar,data);
+            for(DetectionManagerInterface detectionManagerInterface :detectionMethods){
+                detectionManagerInterface.detect(jar,data);
             }
         }catch (Exception e){
             Helper.printRed("\tError (Detection): Exception arose while opening the jarFile with Path "+data.filePath.toString()+": \n"+e);

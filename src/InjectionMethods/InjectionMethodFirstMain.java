@@ -1,6 +1,6 @@
 package InjectionMethods;
 
-import JarTools.JarData;
+import JarTools.InjectionData;
 
 import java.util.jar.JarEntry;
 
@@ -8,7 +8,7 @@ public class InjectionMethodFirstMain implements InjectionMethodInterface {
     private int helperCounter=0;
 
     @Override
-    public boolean isConditionTrue(JarEntry entry, JarData data) {
+    public boolean isConditionTrue(JarEntry entry, InjectionData data) {
         if(helperCounter!=0) return false;
 
         if(!entry.getRealName().equals(data.main)){
@@ -29,5 +29,5 @@ public class InjectionMethodFirstMain implements InjectionMethodInterface {
     @Override
     public void initiate(){
         this.helperCounter=0;
-    };
+    }
 }
