@@ -12,7 +12,10 @@ public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstrac
     ///Check if a string is actually b64
     private boolean isB64(String value){
         //TODO: add a way to check if a string is b64
+        if(value.isEmpty()) return false;
+
         boolean looksBase64 = value.matches("^[A-Za-z0-9+/]*={0,2}$") && value.length() % 4 == 0;
+        if(!looksBase64) return false;
         try {
             byte[] decoded = Base64.getDecoder().decode(value);
             String decodedString=new String(decoded);
@@ -29,7 +32,7 @@ public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstrac
     public void visitLdcInsn(Object value){
         if(value instanceof String){
             if ((isB64((String) value))){
-                this.detectionData.addPayload(methodName, (String)value+",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value))+"\"", "Ldc");
+                this.detectionData.addPayload(methodName, (String)value+"\",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value))+"\"", "Ldc");
             }
         }
         super.visitLdcInsn(value);
@@ -43,7 +46,7 @@ public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstrac
         for(Object value:bootstrapMethodArguments){
             if(value instanceof String){
                 if ((isB64((String) value))){
-                    this.detectionData.addPayload(methodName, (String)value+",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value))+"\"", "invokedynamic");
+                    this.detectionData.addPayload(methodName, (String)value+"\",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value))+"\"", "invokedynamic");
                 }
             }
         }

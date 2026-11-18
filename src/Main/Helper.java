@@ -84,7 +84,7 @@ public class Helper {
     public static String replaceAndHighlight(String base, String[] stringToHighlight, TextColors[] color){
         String ret=base;
         for(int i=0, j=0;i< stringToHighlight.length;i++){
-            ret=ret.replaceAll(stringToHighlight[i],color[j].value+stringToHighlight[i]+TextColors.RESET.value);
+            ret=ret.replace(stringToHighlight[i],color[j].value+stringToHighlight[i]+TextColors.RESET.value);
             if(j+1<color.length) j++;
 
         }

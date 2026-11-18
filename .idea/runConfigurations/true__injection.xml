@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="true, injection" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="Main.MainWorker" />
+    <module name="Obfuscation" />
+    <option name="PROGRAM_PARAMETERS" value="true 1" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

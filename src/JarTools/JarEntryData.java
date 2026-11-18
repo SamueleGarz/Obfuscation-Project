@@ -9,11 +9,11 @@ public class JarEntryData {
     String entryName;
 
     private record payloadData(String location, String value, String type) {
-
         public String returnValues() {
+            System.out.println(value);
                 return "{\"location\":\"" + location + "\", \"value\":\"" + value + "\", \"type\":\"" + type + "\"}";
-            }
         }
+    }
     List<payloadData> payload =new ArrayList<>();
 
     public boolean addPayload(String location, String value, String type){
@@ -37,9 +37,15 @@ public class JarEntryData {
     }
 
     public String payloadsToJson(){
+        if(payload.isEmpty()) return "";
         String ret="{";
+        boolean coma=false;
         for(payloadData a: payload){
-            ret=ret.concat(a.returnValues()+",");
+            if(coma){
+                ret=ret.concat(",");
+            }
+            ret=ret.concat(a.returnValues());
+            coma=true;
         }
         return ret.concat("}");
     }

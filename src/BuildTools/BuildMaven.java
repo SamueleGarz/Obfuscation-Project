@@ -5,6 +5,7 @@ import Main.commandExecute;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class BuildMaven implements BuilderInterface{
 
     @Override
     public BuildData buildWithWrapper(File target) {
-        if (commandExecute.runComm(target,new String[]{"./mvnw","clean","package"}) == 0) {
+        if (commandExecute.runComm(target,new String[]{"./mvnw","clean","package"},null) == 0) {
             return new BuildData(target.toPath(),true, BuildType.MAVEN);
         }else{
             return new BuildData(target.toPath(),false, BuildType.MAVEN);
@@ -56,5 +57,13 @@ public class BuildMaven implements BuilderInterface{
     @Override
     public BuildData buildWithoutWrapper(File target) {
         return new BuildData(target.toPath(),false, BuildType.MAVEN);
+    }
+
+    public BuildMaven(){
+        try {
+            Files.createDirectories(Path.of(System.getProperty("tools.dir","tools")+"/Maven"));}
+        catch (Exception e){
+            Helper.printRed("Exception arose while creating the Maven tool repository:\n"+e);
+        }
     }
 }

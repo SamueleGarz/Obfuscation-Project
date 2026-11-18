@@ -18,7 +18,7 @@ public class DetectionData extends JarDataAbstract{
     }
 
     public String getJson(){
-        String ret="{\"filePath\":\""+filePath+"\",\"entryList\":\"{";
+        String ret="{\"filePath\":\""+filePath+"\",\"entryList\":{";
         for(JarEntryData a: entryList){
             ret=ret.concat(a.payloadsToJson());
         }
