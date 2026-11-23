@@ -1,5 +1,8 @@
 package JarTools;
 
+import BuildTools.BuildData;
+import BytecodeIteration.Injection.GenerateDataClassTraveller;
+import BytecodeIteration.Injection.InjectionClassTravellerAbstract;
 import BytecodeIteration.Injection.InjectionClassTravellerSimple;
 import BytecodeIteration.Injection.InjectionMethodTravellerSimple;
 import InjectionMethods.InjectionMethodEverywhere;
@@ -7,18 +10,26 @@ import InjectionMethods.InjectionMethodFirstMain;
 import Main.Helper;
 import BuildTools.PluginType;
 import ObfuscationManager.ObfuscationManagerBytecode;
+import ObfuscationManager.ObfuscationManagerProGuard;
 import ObfuscationManager.ObfuscatorManagerInterface;
 import PayloadGenerators.PayloadGeneratorPrintB64;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import static org.objectweb.asm.Opcodes.ASM9;
 
 ///Finds all the Jars inside a specific directory following build, creates the InjectionData Object and Injects payloads into a new
 /// Jar located under data/Jars
@@ -38,7 +49,19 @@ public class JarInjector {
                 InjectionMethodTravellerSimple::new,
                 List.of(new PayloadGeneratorPrintB64()),
                 Arrays.asList(new InjectionMethodFirstMain(),new InjectionMethodEverywhere()),
-                Arrays.asList("testPayload", "https://testLink.dsv.su.se")
+                Arrays.asList("testPayload", "https://testLink.dsv.su.se"),
+                "simpleInjection"
+        ));
+        obfuscators.add(new ObfuscationManagerProGuard(
+                "proGuard"
+        ));
+        obfuscators.add(new ObfuscationManagerBytecode(
+                InjectionClassTravellerSimple::new,
+                InjectionMethodTravellerSimple::new,
+                List.of(),
+                List.of(),
+                List.of(),
+                "noInjection"
         ));
     }
 
@@ -74,17 +97,33 @@ public class JarInjector {
                             //TODO: make the system more robust
                             if (outp.type.entryPath.endsWith(".json")){
                                 int begin=line.indexOf("\"main\":[\"")+"\"main\":[\"".length();
-                                outp.main=line.substring(begin,line.indexOf("\"",begin)).strip().replace(".","/")+".class";
-                                if(VERBOSE) Helper.printResultCyan("\t\tFound the .json ",outp.main);
+                                outp.main.add(line.substring(begin,line.indexOf("\"",begin)).strip().replace(".","/")+".class");
+                                if(VERBOSE) Helper.printResultCyan("\t\tFound the .json ",line.substring(begin,line.indexOf("\"",begin)).strip().replace(".","/")+".class");
                             }else if(outp.type.entryPath.endsWith(".yml")){
-                                outp.main=line.substring(line.indexOf("main:")+"main:".length()).strip().replace(".","/")+".class";
-                                if(VERBOSE) Helper.printResultCyan("\t\tFound the .yml ",outp.main);
+                                outp.main.add(line.substring(line.indexOf("main:")+"main:".length()).strip().replace(".","/")+".class");
+                                if(VERBOSE) Helper.printResultCyan("\t\tFound the .yml ",line.substring(line.indexOf("main:")+"main:".length()).strip().replace(".","/")+".class");
                             }
                         }
                     }
                 }catch (Exception e){
                     Helper.printRed("\tError (Injection): Exception arose on the inputStream of "+test.getRealName()+":\n"+e);                }
-            }else if(VERBOSE){ Helper.printRed("\tNEOFORGE, FORGE 1.13+ or FORGE 1.12 or older"); }
+            }else if(VERBOSE){
+                //In this scenario there is a need to look into the bytecode for the entry class
+                Enumeration<JarEntry> jarEntries= entries.entries();
+                while(jarEntries.hasMoreElements()){
+                    JarEntry entry=jarEntries.nextElement();
+                    //ASM loop where the produced payloads are consumed
+                    if(entry.getRealName().endsWith(".class")){
+                        try(InputStream classStream= entries.getInputStream(entry)){
+                            ClassReader cr=new ClassReader(classStream.readAllBytes());
+                            cr.accept(new GenerateDataClassTraveller(ASM9,outp,entry.getRealName()),ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                        }catch (Exception e){
+                            Helper.printRed("\tError (Injection Data Generation): Exception arose on the inputStream of "+entry.getRealName()+":\n"+e);
+                        }
+                    }
+                }
+                if(VERBOSE)Helper.printResultCyan("\t\tNEOFORGE, FORGE 1.13+ or FORGE 1.12 or older",outp.main.toString());
+            }
         }else if(VERBOSE) Helper.printRed("\tError (Injection): No type matches the given jar");
         
         return outp;
@@ -95,11 +134,13 @@ public class JarInjector {
     /// @param toJar Path to the jar file to explore using JarFile
     ///
     /// TODO: add a filter method or class for every entry to decide when to apply what transformation / insertion / ecc.
-    public InjectionData jarExplorer(Path toJar){
+    public InjectionData jarExplorer(Path toJar, BuildData buildData){
         if(VERBOSE) Helper.printResultCyan("\tFound a jar",toJar.toString());
         InjectionData outp=new InjectionData();
         try(JarFile jar=new JarFile(toJar.toString())){
             outp=generateData(jar);
+            outp.dependencies=buildData.dependenciesData;
+            outp.source=buildData.sourcePath;
             for(ObfuscatorManagerInterface obf:obfuscators){
                 obf.inject(jar,outp);
             }

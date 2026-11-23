@@ -1,6 +1,8 @@
 package BuildTools;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 ///Class made to store the data resulting from the build process
 public class BuildData {
@@ -10,6 +12,8 @@ public class BuildData {
     public boolean builds;
     ///Build tool used for successful build
     public BuildType buildType;
+
+    public List<String> dependenciesData=new ArrayList<>();
 
     /// Used to build the object with parameter
     /// @param path Path to the Directory

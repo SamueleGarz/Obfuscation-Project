@@ -7,23 +7,34 @@ import JarTools.JarDetector;
 import JarTools.JarInjector;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainWorker {
 
+    ///Verbose
     private boolean VERBOSE=false;
-
-    ///Array list of all the building tools to be used
-    List<BuilderInterface> builders=new ArrayList<>();
+    ///0: both, 1:injection, 2:detection
+    private int OPERATION=0;
 
     JarInjector jarInjector = new JarInjector();
     JarDetector jarDetector= new JarDetector();
 
+    ///Array list of all the building tools to be used
+    List<BuilderInterface> builders=new ArrayList<>();
     ///Loads all the builders to be used for building
     public void loadBuilder(){
+        try {
+            Files.createDirectories(Path.of(System.getProperty("tools.dir","tools")));}
+        catch (Exception e){
+            Helper.printRed("Exception arose while creating the tools repository:\n"+e);
+        }
+
         builders.add(new BuildGradle());
         builders.add(new BuildMaven());
     }
@@ -55,10 +66,10 @@ public class MainWorker {
     ///
     /// TODO: add detection, improve injection (See JarTools.JarWorker)
     void main(String[] args) {
-
         //Set arguments if present
         if(args.length<1){
             Helper.printResult("Additional arguments omitted.\nCurrent arguments:\n\tVERBOSE",VERBOSE);
+            Helper.printResultCyan("\tOPERATION",String.valueOf(OPERATION));
         }
         else{
             try{
@@ -69,6 +80,17 @@ public class MainWorker {
                 this.jarDetector.setVERBOSE(VERBOSE);
             } catch (Exception e) {
                 Helper.printRed("Argument invalid for VERBOSE\nArgument passed: "+args[0]+"\nExpected: [true/false] (case-insensitive)\nCurrent arguments:\n\tVERBOSE="+VERBOSE);
+            }
+            if(args.length<2){
+                Helper.printResult("Some additional arguments were omitted.\nCurrent arguments:\n\tVERBOSE",VERBOSE);
+                Helper.printResultCyan("\tOPERATION",String.valueOf(OPERATION));
+
+            }else{
+                try{
+                    this.OPERATION=Integer.parseInt(args[1]);
+                } catch (Exception e) {
+                    Helper.printRed("Argument invalid for OPERATION\nArgument passed: "+args[1]+"\nExpected: [0/1/2] (Both/Only Injection/Only Detection)\nCurrent arguments:\n\tOPERATION="+OPERATION);
+                }
             }
         }
 
@@ -92,52 +114,75 @@ public class MainWorker {
         loadBuilder();
 
 
-        //the injection module is dependent on being abel to build a certain file, so that's why the check for building
+        //the injection module is dependent on being able to build a certain file, so that's why the check for building
         //is first
         //-------------------------------------------------------------------------------------------------------------
-        List<InjectionData> injectionData = new ArrayList<>();
-        for (File file : sourceFiles) {
-            // Print name of each file in the data/Sources folder
-            if(VERBOSE) Helper.print("- "+file.getName());
+        if(OPERATION<2){
+            List<InjectionData> injectionData = new ArrayList<>();
+            for (File file : sourceFiles) {
+                // Print name of each file in the data/Sources folder
+                if(VERBOSE) Helper.print("- "+file.getName());
 
-            //Check if each compiles properly with one of the methods
-            BuildData buildRes=builds(file);
+                //Check if each compiles properly with one of the methods
+                BuildData buildRes=builds(file);
 
-            if(VERBOSE) Helper.printResult("\tCan build",buildRes.builds);
-            if(buildRes.builds) {
-                //inject inside the program
-                try {
-                    Files.walk(buildRes.sourcePath).filter(path -> path.toString().endsWith(".jar") &&
-                            path.getParent().toString().contains(buildRes.buildType.buildDir)).forEach(path -> injectionData.add(jarInjector.jarExplorer(path)));
-                } catch (Exception e) {
-                    Helper.printRed("Exception arose during the walk of Path " + buildRes.sourcePath + ": \n" + e);
+                if(VERBOSE) Helper.printResult("\tCan build",buildRes.builds);
+                if(buildRes.builds) {
+                    //inject inside the program
+                    try {
+                        Files.walk(buildRes.sourcePath).filter(path -> path.toString().endsWith(".jar") &&
+                                path.getParent().toString().contains(buildRes.buildType.buildDir)).forEach(path -> injectionData.add(jarInjector.jarExplorer(path,buildRes)));
+                    } catch (Exception e) {
+                        Helper.printRed("Exception arose during the walk of Path " + buildRes.sourcePath + ": \n" + e);
+                    }
+
                 }
-
+            }
+            Helper.print("Injection Data: ");
+            for(InjectionData d:injectionData){
+                d.printNonEmpty("\t");
             }
         }
-        Helper.print("Injection Data: ");
-        for(InjectionData d:injectionData){
-            d.printNonEmpty("\t");
-        }
 
-        //Detection module
-        //-------------------------------------------------------------------------------------------------------------
-        File jars = new File(System.getProperty("data.dir","data")+"/Jars");
-        File[] jarFiles=jars.listFiles();
-        if (jarFiles == null) {
-            return;
-        }
+        if(OPERATION==0 || OPERATION==2){
+            //Detection module
+            //-------------------------------------------------------------------------------------------------------------
+            File jars = new File(System.getProperty("data.dir","data")+"/Jars");
+            File[] jarFiles=jars.listFiles();
+            if (jarFiles == null) {
+                return;
+            }
 
-        List<DetectionData> detectionData=new ArrayList<>();
-        for(File file: jarFiles){
-            DetectionData temp=new DetectionData(file.toPath());
-            jarDetector.jarExplorer(temp);
-            detectionData.add(temp);
-        }
+            List<DetectionData> detectionData=new ArrayList<>();
+            for(File file: jarFiles){
+                DetectionData temp=new DetectionData(file.toPath());
+                jarDetector.jarExplorer(temp);
+                detectionData.add(temp);
+            }
 
-        Helper.print("Detection Data:");
-        for(DetectionData d:detectionData){
-            d.printNonEmpty("\t");
+            Helper.print("Detection Data:");
+
+            if(VERBOSE){
+                for(DetectionData d:detectionData){
+                    d.printNonEmpty("\t");
+                }
+            }
+
+            Date date = new Date() ;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss") ;
+            try(FileWriter writer=new FileWriter(System.getProperty("data.dir","data")+"/Outputs/Detection/"+dateFormat.format(date)+".json")){
+                writer.write("{\"results\":[\n");
+                boolean notSingle=false;
+                for(DetectionData d:detectionData){
+                    if(notSingle) writer.write(",\n");
+                    else writer.write("\n");
+                    writer.write(d.getJson());
+                    notSingle=true;
+                }
+                writer.write("]}");
+            } catch (Exception e) {
+                Helper.printRed("Error while writing detection data into "+System.getProperty("data.dir","data")+"/Outputs/Detection/"+dateFormat.format(date)+".json"+":\n"+e);
+            }
         }
 
     }

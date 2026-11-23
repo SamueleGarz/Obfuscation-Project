@@ -26,6 +26,7 @@ public class ObfuscationManagerBytecode extends ObfuscatorManagerBytecodeAbstrac
     private final List<PayloadGeneratorInterface<Consumer<MethodVisitor>>> payloadGenerators;
     private final List<InjectionMethodInterface> injectionMethods;
     private final List<String> bases;
+    private final String suffix;
 
     /// This class takes a series of generators to produce a payload to be consumed inside a method traveller's insert code.
     ///
@@ -34,16 +35,18 @@ public class ObfuscationManagerBytecode extends ObfuscatorManagerBytecodeAbstrac
     /// @param generators       the list of generators to be used to produce payloads.
     /// @param injectionMethods the list of injection methods. Each generator will be associated with an injectionMethod. If there are fewer methods than generators, the last method will be used for all remaining generators.
     /// @param bases            as above, list of strings to be passed to the generators. If fewer are passed, the last one will be repeated.
-    public ObfuscationManagerBytecode(InitiateClassTraveller ict, InjectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller, List<PayloadGeneratorInterface<Consumer<MethodVisitor>>> generators, List<InjectionMethodInterface> injectionMethods, List<String> bases) {
+    /// @param suffix           The suffix to be used when naming the jars produced by the instance
+    public ObfuscationManagerBytecode(InitiateClassTraveller ict, InjectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller, List<PayloadGeneratorInterface<Consumer<MethodVisitor>>> generators, List<InjectionMethodInterface> injectionMethods, List<String> bases, String suffix) {
         super(ict, methodTraveller);
         this.payloadGenerators=generators;
         this.injectionMethods=injectionMethods;
         this.bases=bases;
+        this.suffix=suffix;
     }
 
     @Override
     public void inject(JarFile jar, InjectionData data) {
-        try(JarOutputStream out=new JarOutputStream(new BufferedOutputStream(Files.newOutputStream(Path.of("data/Jars/"+Path.of(jar.getName()).getFileName()))))){
+        try(JarOutputStream out=new JarOutputStream(new BufferedOutputStream(Files.newOutputStream(Path.of("data/Jars/"+suffix+Path.of(jar.getName()).getFileName()))))){
             //reset before a new loop to ensure accuracy
             for (InjectionMethodInterface injectionMethod:injectionMethods){
                 injectionMethod.initiate();

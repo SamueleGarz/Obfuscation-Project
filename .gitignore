@@ -31,3 +31,6 @@ bin/
 
 data/
 lib/
+tools/Gradle
+tools/Maven
+tools/VisualTools/bootstrap

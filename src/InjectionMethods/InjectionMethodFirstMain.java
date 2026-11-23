@@ -9,18 +9,19 @@ public class InjectionMethodFirstMain implements InjectionMethodInterface {
 
     @Override
     public boolean isConditionTrue(JarEntry entry, InjectionData data) {
-        if(helperCounter!=0) return false;
-
-        if(!entry.getRealName().equals(data.main)){
-            //If the data.main was not found, need a fallback method (turns into an inject once into first class method
-            if(data.main.isBlank()){
-                this.helperCounter=1;
-                return true;
+        if(helperCounter>0) return false;
+        if(data.main.isEmpty()){
+            this.helperCounter=1;
+            return true;
+        }else {
+            for(String val:data.main){
+                if(entry.getRealName().equals(val)){
+                    this.helperCounter=1;
+                    return true;
+                }
             }
-            return false;
         }
-        this.helperCounter=1;
-        return true;
+        return false;
     }
 
     @Override

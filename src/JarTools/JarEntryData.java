@@ -9,11 +9,11 @@ public class JarEntryData {
     String entryName;
 
     private record payloadData(String location, String value, String type) {
-
         public String returnValues() {
+            System.out.println(value);
                 return "{\"location\":\"" + location + "\", \"value\":\"" + value + "\", \"type\":\"" + type + "\"}";
-            }
         }
+    }
     List<payloadData> payload =new ArrayList<>();
 
     public boolean addPayload(String location, String value, String type){
@@ -36,11 +36,30 @@ public class JarEntryData {
         this.entryName=name;
     }
 
+
+    /// Should return something like:
+    ///
+    ///  {
+    ///
+    /// "name": "\<name\>"
+    ///
+    /// "payloads": [
+    ///
+    ///     { payload }, ..., {payload}
+    ///
+    /// ]}
     public String payloadsToJson(){
-        String ret="{";
+        String ret="{\"name\":\""+this.entryName+"\",\"payloads\":[";
+        if(payload.isEmpty()) return ret.concat("]}");
+
+        boolean notSingle=false;
+
         for(payloadData a: payload){
-            ret=ret.concat(a.returnValues()+",");
+            if(notSingle) ret=ret.concat(",");
+            ret=ret.concat(a.returnValues());
+            notSingle=true;
         }
-        return ret.concat("}");
+
+        return ret.concat("]}");
     }
 }
