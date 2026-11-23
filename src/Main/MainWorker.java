@@ -171,9 +171,15 @@ public class MainWorker {
             Date date = new Date() ;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss") ;
             try(FileWriter writer=new FileWriter(System.getProperty("data.dir","data")+"/Outputs/Detection/"+dateFormat.format(date)+".json")){
+                writer.write("{\"results\":[\n");
+                boolean notSingle=false;
                 for(DetectionData d:detectionData){
-                    writer.write(d.getJson()+"\n");
+                    if(notSingle) writer.write(",\n");
+                    else writer.write("\n");
+                    writer.write(d.getJson());
+                    notSingle=true;
                 }
+                writer.write("]}");
             } catch (Exception e) {
                 Helper.printRed("Error while writing detection data into "+System.getProperty("data.dir","data")+"/Outputs/Detection/"+dateFormat.format(date)+".json"+":\n"+e);
             }

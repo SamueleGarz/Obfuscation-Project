@@ -18,11 +18,14 @@ public class DetectionData extends JarDataAbstract{
     }
 
     public String getJson(){
-        String ret="{\"filePath\":\""+filePath+"\",\"entryList\":{";
+        String ret="{\"filePath\":\""+filePath+"\",\"entryList\":[";
+        boolean notSingle=false;
         for(JarEntryData a: entryList){
+            if(notSingle) ret=ret.concat(",");
             ret=ret.concat(a.payloadsToJson());
+            notSingle=true;
         }
-        return ret.concat("}}");
+        return ret.concat("]}");
     }
 
     @Override

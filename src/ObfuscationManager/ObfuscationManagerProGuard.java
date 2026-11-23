@@ -98,7 +98,6 @@ public class ObfuscationManagerProGuard implements ObfuscatorManagerInterface{
                 for(String key:dependencies.keySet()){
                     if(key.equals(obj) || key.equals(":")){
                         visited.add(key);
-
                         for(genericStorageStringBool val: dependencies.get(key)){
                             if(val.check){
                                 toWrite.add(val.value);

@@ -44,16 +44,24 @@ public class JarInjector {
 
     ///all the methods to use are placed here
     public JarInjector(){
-//        obfuscators.add(new ObfuscationManagerBytecode(
-//                InjectionClassTravellerSimple::new,
-//                InjectionMethodTravellerSimple::new,
-//                List.of(new PayloadGeneratorPrintB64()),
-//                Arrays.asList(new InjectionMethodFirstMain(),new InjectionMethodEverywhere()),
-//                Arrays.asList("testPayload", "https://testLink.dsv.su.se"),
-//                "simpleInjection"
-//        ));
+        obfuscators.add(new ObfuscationManagerBytecode(
+                InjectionClassTravellerSimple::new,
+                InjectionMethodTravellerSimple::new,
+                List.of(new PayloadGeneratorPrintB64()),
+                Arrays.asList(new InjectionMethodFirstMain(),new InjectionMethodEverywhere()),
+                Arrays.asList("testPayload", "https://testLink.dsv.su.se"),
+                "simpleInjection"
+        ));
         obfuscators.add(new ObfuscationManagerProGuard(
                 "proGuard"
+        ));
+        obfuscators.add(new ObfuscationManagerBytecode(
+                InjectionClassTravellerSimple::new,
+                InjectionMethodTravellerSimple::new,
+                List.of(),
+                List.of(),
+                List.of(),
+                "noInjection"
         ));
     }
 

@@ -1,0 +1,117 @@
+<html lang="eng">
+    <head>
+        <title> Obfuscation Results </title>
+        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    </head>
+
+<body>
+<div class="container py-5">
+    <input type="file" id="picker" accept=".json" class="form-control mb-5">
+    <div id="results" class="row"></div>
+</div>
+
+<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+
+    function render(data){
+        const resDiv=document.getElementById("results");
+        for(const result of data.results) {
+
+            const item=document.createElement("div");
+            item.innerText=result.filePath;
+            item.setAttribute("name","result");
+
+            var emptyCheckResult=false;
+
+            for(const entry of result.entryList){
+                const entryItem=document.createElement("div");
+                entryItem.className="bg-info border row d-none";
+                entryItem.innerText=entry.name;
+                entryItem.setAttribute("name","entry");
+
+                var emptycheck=false;
+
+                for(const payload of entry.payloads){
+                    emptycheck=true;
+                    const payloadItem=document.createElement("div");
+                    payloadItem.className="bg-white border row d-none";
+                    var text="";
+                    console.log(payload);
+                    for(const [key,value] of Object.entries(payload)) text+="-"+key+": "+value+"\n";
+
+                    payloadItem.innerText=text;
+                    payloadItem.style.color="#000000";
+                    entryItem.append(payloadItem);
+                }
+                entryItem.dataset.notempty=emptycheck;
+
+                //using OR so that I need only one
+                emptyCheckResult=emptyCheckResult || emptycheck;
+
+                if(emptycheck){
+                    entryItem.className="bg-info border row d-none";
+                }else{
+                    entryItem.className="bg-white border row d-none";
+                    entryItem.style.color="#000000";
+                }
+                entryItem.onclick=function (e){
+                    if (e.target !== this) return;
+                    for(child of this.children){
+                        if(child.className.indexOf("d-none")>0){
+                            child.className="bg-white border row d-flex";
+                        }else{
+                            child.className="bg-white border row d-none";
+                        }
+                    }
+                };
+
+                item.dataset.notempty=emptyCheckResult;
+                item.append(entryItem);
+            }
+            item.onclick=function (e){
+                if (e.target !== this) return;
+                for(child of this.children){
+                    if(child.className.indexOf("d-none")>0){
+                        if(child.dataset.notempty==="true"){
+                            child.className="bg-info border row d-flex";
+                        }else{
+                            child.className="bg-white border row d-flex";
+                        }
+                    }else{
+                        child.className="bg-white border row d-none";
+                    }
+                }
+            };
+
+            if(emptyCheckResult){
+                item.className="bg-success fg-contrast-primary border row";
+            }else{
+                item.className="bg-secondary fg-contrast-primary border row";
+            }
+
+            resDiv.append(item);
+        }
+    }
+
+    document.getElementById("picker").addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        try{
+            render(JSON.parse(await file.text()));
+            // for(const result of data.results) {
+            //     console.log(result.filePath);
+            //     for(const entry of result.entryList){
+            //         console.log("\t"+entry.name);
+            //         for(const payload of entry.payloads){
+            //             console.log(payload)
+            //         }
+            //     }
+            // }
+        } catch (err) {
+            console.error("Invalid JSON:", err.message);
+        }
+    });
+</script>
+</body>

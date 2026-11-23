@@ -32,7 +32,7 @@ public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstrac
     public void visitLdcInsn(Object value){
         if(value instanceof String){
             if ((isB64((String) value))){
-                this.detectionData.addPayload(methodName, (String)value+"\",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value))+"\"", "Ldc");
+                this.detectionData.addPayload(methodName, (String)value+"\",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value)), "Ldc");
             }
         }
         super.visitLdcInsn(value);
@@ -46,7 +46,7 @@ public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstrac
         for(Object value:bootstrapMethodArguments){
             if(value instanceof String){
                 if ((isB64((String) value))){
-                    this.detectionData.addPayload(methodName, (String)value+"\",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value))+"\"", "invokedynamic");
+                    this.detectionData.addPayload(methodName, (String)value+"\",\"decodesTo\":\""+ new String(Base64.getDecoder().decode((String)value)), "invokedynamic");
                 }
             }
         }

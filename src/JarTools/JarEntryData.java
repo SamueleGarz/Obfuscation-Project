@@ -36,17 +36,30 @@ public class JarEntryData {
         this.entryName=name;
     }
 
+
+    /// Should return something like:
+    ///
+    ///  {
+    ///
+    /// "name": "\<name\>"
+    ///
+    /// "payloads": [
+    ///
+    ///     { payload }, ..., {payload}
+    ///
+    /// ]}
     public String payloadsToJson(){
-        if(payload.isEmpty()) return "";
-        String ret="{";
-        boolean coma=false;
+        String ret="{\"name\":\""+this.entryName+"\",\"payloads\":[";
+        if(payload.isEmpty()) return ret.concat("]}");
+
+        boolean notSingle=false;
+
         for(payloadData a: payload){
-            if(coma){
-                ret=ret.concat(",");
-            }
+            if(notSingle) ret=ret.concat(",");
             ret=ret.concat(a.returnValues());
-            coma=true;
+            notSingle=true;
         }
-        return ret.concat("}");
+
+        return ret.concat("]}");
     }
 }
