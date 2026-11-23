@@ -1,9 +1,9 @@
-package BytecodeIteration.Detection;
+package BytecodeIteration.Detection.MethodTraveller;
 
 import JarTools.JarEntryData;
 import org.objectweb.asm.MethodVisitor;
 
-public abstract class DetectionMethodTravellerAbstract extends MethodVisitor {
+public abstract class Abstract extends MethodVisitor {
 
     ///The structure used to store data during detection
     JarEntryData detectionData;
@@ -11,7 +11,7 @@ public abstract class DetectionMethodTravellerAbstract extends MethodVisitor {
     ///Name of the method being observed
     String methodName;
 
-    protected DetectionMethodTravellerAbstract(int api, MethodVisitor methodVisitor, JarEntryData jarEntryData, String methodName) {
+    protected Abstract(int api, MethodVisitor methodVisitor, JarEntryData jarEntryData, String methodName) {
         super(api, methodVisitor);
         this.detectionData= jarEntryData;
         this.methodName=methodName;

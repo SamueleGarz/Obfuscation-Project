@@ -1,12 +1,12 @@
-package BytecodeIteration.Detection;
+package BytecodeIteration.Detection.ClassTraveller;
 
 import JarTools.JarEntryData;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class DetectionClassTravellerSimple extends DetectionClassTravellerAbstract{
+public class Simple extends Abstract {
 
-    public DetectionClassTravellerSimple(int api, ClassVisitor classVisitor, JarEntryData dd, InitiateMethodTraveller methodTraveller) {
+    public Simple(int api, ClassVisitor classVisitor, JarEntryData dd, InitiateMethodTraveller methodTraveller) {
         super(api, classVisitor, dd, methodTraveller);
     }
 

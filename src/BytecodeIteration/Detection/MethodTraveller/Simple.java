@@ -1,4 +1,4 @@
-package BytecodeIteration.Detection;
+package BytecodeIteration.Detection.MethodTraveller;
 
 import JarTools.JarEntryData;
 import org.objectweb.asm.Handle;
@@ -7,11 +7,11 @@ import org.objectweb.asm.MethodVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetectionMethodTravellerSimple extends DetectionMethodTravellerAbstract {
+public class Simple extends Abstract {
 
     List<String> valuesCleartext=new ArrayList<>();
 
-    protected DetectionMethodTravellerSimple(int api, MethodVisitor methodVisitor, JarEntryData dd, String methodName) {
+    protected Simple(int api, MethodVisitor methodVisitor, JarEntryData dd, String methodName) {
         super(api, methodVisitor, dd, methodName);
         valuesCleartext.add(
                 "dsv.su.se"

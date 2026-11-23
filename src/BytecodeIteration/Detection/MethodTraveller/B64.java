@@ -1,4 +1,4 @@
-package BytecodeIteration.Detection;
+package BytecodeIteration.Detection.MethodTraveller;
 
 import JarTools.JarEntryData;
 import org.objectweb.asm.Handle;
@@ -7,7 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 import java.util.Base64;
 
 ///Method traveler class that checks for base64 encrypted strings
-public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstract {
+public class B64 extends Abstract {
 
     ///Check if a string is actually b64
     private boolean isB64(String value){
@@ -24,7 +24,7 @@ public class DetectionMethodTravellerB64 extends DetectionMethodTravellerAbstrac
             return false;
         }
     }
-    public DetectionMethodTravellerB64(int api, MethodVisitor methodVisitor, JarEntryData dd, String methodName) {
+    public B64(int api, MethodVisitor methodVisitor, JarEntryData dd, String methodName) {
         super(api, methodVisitor, dd, methodName);
     }
 

@@ -1,8 +1,7 @@
 package DetectionManager;
 
-import BytecodeIteration.Detection.DetectionClassTravellerAbstract;
+import BytecodeIteration.Detection.ClassTraveller.Abstract;
 import JarTools.DetectionData;
-import JarTools.InjectionData;
 import Main.Helper;
 
 import java.io.InputStream;
@@ -12,8 +11,8 @@ import java.util.jar.JarFile;
 
 public class DetectionManagerBytecode extends DetectionManagerBytecodeAbstract {
 
-    public DetectionManagerBytecode(InitiateClassTraveller ict, DetectionClassTravellerAbstract.InitiateMethodTraveller methodTraveller) {
-        super(ict, methodTraveller);
+    public DetectionManagerBytecode(InitiateClassTraveller ict, Abstract.InitiateMethodTraveller methodTraveller, String identifier) {
+        super(ict, methodTraveller, identifier);
     }
 
     @Override

@@ -1,10 +1,7 @@
 package ObfuscationManager;
 
-import BytecodeIteration.Detection.DetectionClassTravellerAbstract;
 import BytecodeIteration.Injection.InjectionClassTravellerAbstract;
-import JarTools.InjectionData;
 import JarTools.JarEntryData;
-import JarTools.JarInjector;
 import PayloadGenerators.PayloadData;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;

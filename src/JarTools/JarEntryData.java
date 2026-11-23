@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JarEntryData {
-    String entryName;
+    public String entryName;
 
     private record payloadData(String location, String value, String type) {
         public String returnValues() {
-            System.out.println(value);
                 return "{\"location\":\"" + location + "\", \"value\":\"" + value + "\", \"type\":\"" + type + "\"}";
         }
     }

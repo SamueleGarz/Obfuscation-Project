@@ -5,6 +5,7 @@ import JarTools.DetectionData;
 import JarTools.InjectionData;
 import JarTools.JarDetector;
 import JarTools.JarInjector;
+import com.sun.tools.jconsole.JConsoleContext;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -160,9 +161,9 @@ public class MainWorker {
                 detectionData.add(temp);
             }
 
-            Helper.print("Detection Data:");
 
             if(VERBOSE){
+                Helper.print("Detection Data:");
                 for(DetectionData d:detectionData){
                     d.printNonEmpty("\t");
                 }

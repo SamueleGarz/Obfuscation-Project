@@ -1,7 +1,8 @@
 package JarTools;
 
-import BytecodeIteration.Detection.DetectionClassTravellerSimple;
-import BytecodeIteration.Detection.DetectionMethodTravellerB64;
+import BytecodeIteration.Detection.ClassTraveller.LengthAndCount;
+import BytecodeIteration.Detection.ClassTraveller.Simple;
+import BytecodeIteration.Detection.MethodTraveller.B64;
 import DetectionManager.DetectionManagerInterface;
 import DetectionManager.DetectionManagerBytecode;
 import Main.Helper;
@@ -17,11 +18,19 @@ public class JarDetector {
     List<DetectionManagerInterface> detectionMethods=new ArrayList<>();
 
     public JarDetector(){
+//        detectionMethods.add(
+//                new DetectionManagerBytecode(
+//                        Simple::new,
+//                        B64::new,
+//                        "base64Detection"
+//                ));
         detectionMethods.add(
                 new DetectionManagerBytecode(
-                        DetectionClassTravellerSimple::new,
-                        DetectionMethodTravellerB64::new
-                ));
+                        LengthAndCount::new,
+                        BytecodeIteration.Detection.MethodTraveller.LengthAndCount::new,
+                        "lengthAndCount"
+                )
+        );
     }
 
     /// Set the variable VERBOSE in the object
